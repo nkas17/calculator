@@ -1,0 +1,33 @@
+{
+	"name": "calculator",
+	"version": "0.0.1",
+	"description": "a basic calculator",
+	"main": "index.js",
+	"scripts": {
+		"build": "./node_modules/.bin/webpack",
+		"test": "jest"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/nkas17/calculator.git"
+	},
+	"author": "nathanmweller",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/nkas17/calculator/issues"
+	},
+	"homepage": "https://github.com/nkas17/calculator#readme",
+	"devDependencies": {
+		"@babel/core": "7.7.2",
+		"@babel/preset-env": "7.7.1",
+		"@babel/preset-react": "7.7.0",
+		"babel-loader": "8.0.6",
+		"copy-webpack-plugin": "5.0.5",
+		"webpack": "4.41.2",
+		"webpack-cli": "3.3.10"
+	},
+	"dependencies": {
+		"react": "16.12.0",
+		"react-dom": "16.12.0"
+	}
+}
