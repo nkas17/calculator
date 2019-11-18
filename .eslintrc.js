@@ -17,6 +17,7 @@ module.exports = {
 		indent: [
 			"error",
 			"tab",
+			{ "SwitchCase": 1 },
 		],
 		"react/jsx-indent": [
 			"error",
@@ -26,16 +27,7 @@ module.exports = {
 			"error",
 			"tab",
 		],
-		"react/jsx-one-expression-per-line": "off",
-		"react/no-unescaped-entities": "off",
 		"no-tabs": "off",
-		quotes: [
-			"error",
-			"single",
-			{
-				allowTemplateLiterals: true,
-			},
-		],
 		"prettier/prettier": [
 			"error",
 			{
