@@ -44,7 +44,7 @@ class App extends React.Component {
 			return;
 		}
 		if (operand === '=') {
-			const total = this.calculate();
+			const total = this.calculate().toString();
 			this.setState({
 				display: total,
 				leftOperand: null,
@@ -56,7 +56,7 @@ class App extends React.Component {
 		}
 		if (
 			!operation &&
-			!rightOperand &&
+			rightOperand === null &&
 			operators.includes(operand) &&
 			!isTotaled
 		) {
@@ -66,7 +66,7 @@ class App extends React.Component {
 		}
 		if (
 			!operation &&
-			!rightOperand &&
+			rightOperand === null &&
 			operators.includes(operand) &&
 			isTotaled
 		) {
@@ -78,7 +78,7 @@ class App extends React.Component {
 			});
 			return;
 		}
-		if (Number(operand) || operand === '.') {
+		if (Number(operand) || operand === '0' || operand === '.') {
 			let clear = {};
 			if (isTotaled) {
 				clear = {
@@ -90,12 +90,12 @@ class App extends React.Component {
 					isTotaled: false,
 				};
 			}
-			if (operation && !rightOperand) {
+			if (operation && rightOperand === null) {
 				// set to rightOperand and return
 				this.setState({ ...clear, rightOperand: operand, display: operand });
 				return;
 			}
-			if (operation && rightOperand && rightOperand.length < 8) {
+			if (operation && rightOperand !== null && rightOperand.length < 8) {
 				// set to rightOperand + operand and return
 				this.setState({
 					...clear,
@@ -103,12 +103,12 @@ class App extends React.Component {
 					display: rightOperand + operand,
 				});
 			}
-			if (!operation && !leftOperand) {
+			if (!operation && leftOperand === null) {
 				// set to leftOperand and return
 				this.setState({ ...clear, leftOperand: operand, display: operand });
 				return;
 			}
-			if (!operation && leftOperand && leftOperand.length < 8) {
+			if (!operation && leftOperand !== null && leftOperand.length < 8) {
 				// set to leftOperand + operand and return
 				this.setState({
 					...clear,
@@ -122,10 +122,11 @@ class App extends React.Component {
 	calculate() {
 		const { leftOperand, rightOperand, operation } = this.state;
 		let total = 0;
-		if (!operation && !leftOperand) return 0;
-		if (!operation && leftOperand) return leftOperand;
-		if (operation && leftOperand && !rightOperand) return leftOperand;
-		if (operation && leftOperand && rightOperand) {
+		if (!operation && leftOperand === null) return 0;
+		if (!operation && leftOperand !== null) return leftOperand;
+		if (operation && leftOperand !== null && rightOperand === null)
+			return leftOperand;
+		if (operation && leftOperand !== null && rightOperand !== null) {
 			switch (operation) {
 				case '+':
 					total = Number(leftOperand) + Number(rightOperand);
