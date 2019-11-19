@@ -16,68 +16,48 @@ class App extends React.Component {
 	}
 
 	onClick(e) {
-		/*
-			if number append to previous number save to first number
-			if operator save operator to apply
-			if operator already applied and a number append to previous second number
-			if = then calculate
-
-
-		*/
-		const operators = ['+', '-', 'x', '/'];
-		const {
-			leftOperand,
-			rightOperand,
-			operation,
-			isTotaled,
-			display,
-		} = this.state;
 		const operand = e.target.innerHTML;
-		if (operand === 'AC') {
-			this.setState({
-				leftOperand: null,
-				rightOperand: null,
-				operation: null,
-				display: 0,
-				isTotaled: false,
-			});
-			return;
+		switch (operand) {
+			case 'AC':
+				this.clearAll();
+				break;
+			case '=':
+				this.calculateForDisplay();
+				break;
+			case '+/-':
+				this.positiveOrNegative();
+				break;
+			case '%':
+				this.percent();
+				break;
+			case '+':
+			case '-':
+			case 'x':
+			case '/':
+				this.setOperation(operand);
+				break;
+			default:
+				this.applyNumberOrDecimal(operand);
 		}
-		if (operand === '=') {
-			const total = this.calculate().toString();
-			this.setState({
-				display: total,
-				leftOperand: null,
-				rightOperand: null,
-				operation: null,
-				isTotaled: true,
-			});
-			return;
-		}
-		if (
-			!operation &&
-			rightOperand === null &&
-			operators.includes(operand) &&
-			!isTotaled
-		) {
-			// time to save operation
+	}
+
+	setOperation(operand) {
+		const { rightOperand, operation, isTotaled, display } = this.state;
+		if (!operation && rightOperand === null) {
+			if (isTotaled) {
+				this.setState({
+					operation: operand,
+					isTotaled: false,
+					leftOperand: display,
+				});
+				return;
+			}
 			this.setState({ operation: operand });
-			return;
 		}
-		if (
-			!operation &&
-			rightOperand === null &&
-			operators.includes(operand) &&
-			isTotaled
-		) {
-			// time to save operation
-			this.setState({
-				operation: operand,
-				isTotaled: false,
-				leftOperand: display,
-			});
-			return;
-		}
+	}
+
+	applyNumberOrDecimal(operand) {
+		const { leftOperand, rightOperand, operation, isTotaled } = this.state;
 		if (Number(operand) || operand === '0' || operand === '.') {
 			let clear = {};
 			if (isTotaled) {
@@ -117,6 +97,59 @@ class App extends React.Component {
 				});
 			}
 		}
+	}
+
+	percent() {
+		const { display, leftOperand, rightOperand } = this.state;
+		const number = (Number(display) / 100).toString();
+		if (leftOperand !== null && rightOperand !== null) {
+			this.setState({
+				rightOperand: number,
+				display: number,
+			});
+			return;
+		}
+		this.setState({
+			leftOperand: number,
+			display: number,
+		});
+	}
+
+	positiveOrNegative() {
+		const { display, leftOperand, rightOperand } = this.state;
+		const number = (Number(display) * -1).toString();
+		if (leftOperand !== null && rightOperand !== null) {
+			this.setState({
+				rightOperand: number,
+				display: number,
+			});
+			return;
+		}
+		this.setState({
+			leftOperand: number,
+			display: number,
+		});
+	}
+
+	clearAll() {
+		this.setState({
+			leftOperand: null,
+			rightOperand: null,
+			operation: null,
+			display: 0,
+			isTotaled: false,
+		});
+	}
+
+	calculateForDisplay() {
+		const total = this.calculate().toString();
+		this.setState({
+			display: total,
+			leftOperand: null,
+			rightOperand: null,
+			operation: null,
+			isTotaled: true,
+		});
 	}
 
 	calculate() {
@@ -169,10 +202,18 @@ class App extends React.Component {
 						>
 							AC
 						</button>
-						<button type="button" className="calc-button">
+						<button
+							type="button"
+							className="calc-button"
+							onClick={this.onClick}
+						>
 							+/-
 						</button>
-						<button type="button" className="calc-button">
+						<button
+							type="button"
+							className="calc-button"
+							onClick={this.onClick}
+						>
 							%
 						</button>
 						<button

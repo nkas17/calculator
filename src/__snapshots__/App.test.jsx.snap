@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`renders correctly 1`] = `
+exports[`App renders correctly 1`] = `
 <main>
   <section
     className="calc-container"
@@ -22,12 +22,14 @@ exports[`renders correctly 1`] = `
       </button>
       <button
         className="calc-button"
+        onClick={[Function]}
         type="button"
       >
         +/-
       </button>
       <button
         className="calc-button"
+        onClick={[Function]}
         type="button"
       >
         %
