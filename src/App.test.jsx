@@ -50,43 +50,85 @@ describe('App function onClick', () => {
 		expect(app.percent).toHaveBeenCalledTimes(1);
 	});
 
-	it('works correctly when "+" is clicked', () => {
-		const app = new App();
-		app.setOperation = jest.fn();
-		const e = {
-			target: { innerHTML: '+' },
-		};
-		app.onClick(e);
-		expect(app.setOperation).toHaveBeenCalledWith('+');
+	const operators = ['+', '-', 'x', '/'];
+	operators.forEach(item => {
+		it(`works correctly when "${item}" is clicked`, () => {
+			const app = new App();
+			app.setOperation = jest.fn();
+			const e = {
+				target: { innerHTML: item },
+			};
+			app.onClick(e);
+			expect(app.setOperation).toHaveBeenCalledWith(item);
+		});
 	});
 
-	it('works correctly when "-" is clicked', () => {
+	const numbersAndDecimal = [
+		'0',
+		'1',
+		'2',
+		'3',
+		'4',
+		'5',
+		'6',
+		'7',
+		'8',
+		'9',
+		'.',
+	];
+	numbersAndDecimal.forEach(item => {
+		it(`works correctly when "${item}" is clicked`, () => {
+			const app = new App();
+			app.applyNumberOrDecimal = jest.fn();
+			const e = {
+				target: { innerHTML: item },
+			};
+			app.onClick(e);
+			expect(app.applyNumberOrDecimal).toHaveBeenCalledWith(item);
+		});
+	});
+});
+
+describe('App function setOperation', () => {
+	it('works correctly when "+" passed in with no right operand and isTotaled', () => {
 		const app = new App();
-		app.setOperation = jest.fn();
-		const e = {
-			target: { innerHTML: '-' },
+		app.state = {
+			rightOperand: null,
+			operation: null,
+			isTotaled: true,
+			display: 'whatever',
 		};
-		app.onClick(e);
-		expect(app.setOperation).toHaveBeenCalledWith('-');
+		app.setState = jest.fn();
+		app.setOperation('+');
+		expect(app.setState).toHaveBeenCalledWith({
+			operation: '+',
+			isTotaled: false,
+			leftOperand: 'whatever',
+		});
 	});
 
-	it('works correctly when "x" is clicked', () => {
+	it('works correctly with no right operand and is Not Totaled', () => {
 		const app = new App();
-		app.setOperation = jest.fn();
-		const e = {
-			target: { innerHTML: 'x' },
+		app.state = {
+			rightOperand: null,
+			operation: null,
+			isTotaled: false,
 		};
-		app.onClick(e);
-		expect(app.setOperation).toHaveBeenCalledWith('x');
+		app.setState = jest.fn();
+		app.setOperation('+');
+		expect(app.setState).toHaveBeenCalledWith({
+			operation: '+',
+		});
 	});
 
-	it('works correctly when "/" is clicked', () => {
+	it('works correctly with a current operation and no right operand', () => {
 		const app = new App();
-		app.setOperation = jest.fn();
-		const e = {
-			target: { innerHTML: '/' },
+		app.state = {
+			rightOperand: null,
+			operation: '-',
 		};
-		app.onClick(e);
-		expect(app.setOperation).toHaveBeenCalledWith('/');
+		app.setState = jest.fn();
+		app.setOperation('+');
+		expect(app.setState).not.toHaveBeenCalled();
 	});
 });
