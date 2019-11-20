@@ -90,7 +90,7 @@ describe('App function onClick', () => {
 });
 
 describe('App function setOperation', () => {
-	it('works correctly when "+" passed in with no right operand and isTotaled', () => {
+	it('works correctly with no right operand and isTotaled', () => {
 		const app = new App();
 		app.state = {
 			rightOperand: null,
@@ -130,5 +130,192 @@ describe('App function setOperation', () => {
 		app.setState = jest.fn();
 		app.setOperation('+');
 		expect(app.setState).not.toHaveBeenCalled();
+	});
+});
+
+describe('App function clearAll', () => {
+	it('works correctly', () => {
+		const app = new App();
+		app.setState = jest.fn();
+		app.clearAll();
+		expect(app.setState).toHaveBeenCalledWith({
+			leftOperand: null,
+			rightOperand: null,
+			operation: null,
+			display: 0,
+			isTotaled: false,
+		});
+	});
+});
+
+describe('App function calculateForDisplay', () => {
+	it('works correctly when ready to calculate', () => {
+		const app = new App();
+		app.state = { leftOperand: '1', operation: '+', rightOperand: '1' };
+		app.setState = jest.fn();
+		app.calculate = jest.fn().mockReturnValue(123);
+		app.calculateForDisplay();
+		expect(app.calculate).toHaveBeenCalled();
+		expect(app.setState).toHaveBeenCalledWith({
+			leftOperand: null,
+			rightOperand: null,
+			operation: null,
+			display: '123',
+			isTotaled: true,
+		});
+	});
+
+	it('works correctly when not ready to calculate with rightOperand null', () => {
+		const app = new App();
+		app.state = { leftOperand: '1', operation: '+', rightOperand: null };
+		app.setState = jest.fn();
+		app.calculate = jest.fn();
+		app.calculateForDisplay();
+		expect(app.calculate).not.toHaveBeenCalled();
+		expect(app.setState).not.toHaveBeenCalled();
+	});
+
+	it('works correctly when not ready to calculate with operation null', () => {
+		const app = new App();
+		app.state = { leftOperand: '1', operation: null };
+		app.setState = jest.fn();
+		app.calculate = jest.fn();
+		app.calculateForDisplay();
+		expect(app.calculate).not.toHaveBeenCalled();
+		expect(app.setState).not.toHaveBeenCalled();
+	});
+
+	it('works correctly when not ready to calculate with leftOperand null', () => {
+		const app = new App();
+		app.state = { leftOperand: null };
+		app.setState = jest.fn();
+		app.calculate = jest.fn();
+		app.calculateForDisplay();
+		expect(app.calculate).not.toHaveBeenCalled();
+		expect(app.setState).not.toHaveBeenCalled();
+	});
+});
+
+describe('App function percent', () => {
+	it('works correctly when applied to rightOperand', () => {
+		const app = new App();
+		app.setState = jest.fn();
+		app.state = {
+			display: '200',
+			leftOperand: '100',
+			rightOperand: '200',
+		};
+		app.percent();
+		expect(app.setState).toHaveBeenCalledWith({
+			rightOperand: '2',
+			display: '2',
+		});
+	});
+	it('works correctly when applied to leftOperand', () => {
+		const app = new App();
+		app.setState = jest.fn();
+		app.state = {
+			display: '100',
+			leftOperand: '100',
+			rightOperand: null,
+		};
+		app.percent();
+		expect(app.setState).toHaveBeenCalledWith({
+			leftOperand: '1',
+			display: '1',
+		});
+	});
+});
+
+describe('App function positiveOrNegative', () => {
+	it('works correctly when applied to positive rightOperand', () => {
+		const app = new App();
+		app.setState = jest.fn();
+		app.state = {
+			display: '200',
+			leftOperand: '100',
+			rightOperand: '200',
+		};
+		app.positiveOrNegative();
+		expect(app.setState).toHaveBeenCalledWith({
+			rightOperand: '-200',
+			display: '-200',
+		});
+	});
+	it('works correctly when applied to negative leftOperand', () => {
+		const app = new App();
+		app.setState = jest.fn();
+		app.state = {
+			display: '-100',
+			leftOperand: '-100',
+			rightOperand: null,
+		};
+		app.positiveOrNegative();
+		expect(app.setState).toHaveBeenCalledWith({
+			leftOperand: '100',
+			display: '100',
+		});
+	});
+});
+
+describe('App function calculate', () => {
+	it('works correctly when operation is "+"', () => {
+		const app = new App();
+		App.formatTotal = jest.fn();
+		app.state = {
+			operation: '+',
+			leftOperand: '100',
+			rightOperand: '200',
+		};
+		app.calculate();
+		expect(App.formatTotal).toHaveBeenCalledWith(300);
+	});
+
+	it('works correctly when operation is "-"', () => {
+		const app = new App();
+		App.formatTotal = jest.fn();
+		app.state = {
+			operation: '-',
+			leftOperand: '100',
+			rightOperand: '200',
+		};
+		app.calculate();
+		expect(App.formatTotal).toHaveBeenCalledWith(-100);
+	});
+
+	it('works correctly when operation is "x"', () => {
+		const app = new App();
+		App.formatTotal = jest.fn();
+		app.state = {
+			operation: 'x',
+			leftOperand: '100',
+			rightOperand: '200',
+		};
+		app.calculate();
+		expect(App.formatTotal).toHaveBeenCalledWith(20000);
+	});
+
+	it('works correctly when operation is "/"', () => {
+		const app = new App();
+		App.formatTotal = jest.fn();
+		app.state = {
+			operation: '/',
+			leftOperand: '100',
+			rightOperand: '200',
+		};
+		app.calculate();
+		expect(App.formatTotal).toHaveBeenCalledWith(0.5);
+	});
+
+	it('works correctly when operation is unknown', () => {
+		const app = new App();
+		App.formatTotal = jest.fn();
+		app.state = {
+			operation: '_',
+			leftOperand: '100',
+			rightOperand: '200',
+		};
+		expect(app.calculate()).toEqual(0);
+		expect(App.formatTotal).not.toHaveBeenCalled();
 	});
 });

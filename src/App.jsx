@@ -2,7 +2,15 @@ import React from 'react';
 import '../node_modules/normalize.css/normalize.css';
 import './styles/main.css';
 
+const MAX_DISPLAY = 8;
+
 class App extends React.Component {
+	static formatTotal(total) {
+		if (total.toString().includes('.'))
+			return Number.parseFloat(total.toPrecision(MAX_DISPLAY).toString());
+		return total;
+	}
+
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -70,26 +78,33 @@ class App extends React.Component {
 					isTotaled: false,
 				};
 			}
+
+			// set right
 			if (operation && rightOperand === null) {
-				// set to rightOperand and return
 				this.setState({ ...clear, rightOperand: operand, display: operand });
 				return;
 			}
-			if (operation && rightOperand !== null && rightOperand.length < 8) {
-				// set to rightOperand + operand and return
+			if (
+				operation &&
+				rightOperand !== null &&
+				rightOperand.length < MAX_DISPLAY
+			) {
 				this.setState({
 					...clear,
 					rightOperand: rightOperand + operand,
 					display: rightOperand + operand,
 				});
 			}
+			// set left
 			if (!operation && leftOperand === null) {
-				// set to leftOperand and return
 				this.setState({ ...clear, leftOperand: operand, display: operand });
 				return;
 			}
-			if (!operation && leftOperand !== null && leftOperand.length < 8) {
-				// set to leftOperand + operand and return
+			if (
+				!operation &&
+				leftOperand !== null &&
+				leftOperand.length < MAX_DISPLAY
+			) {
 				this.setState({
 					...clear,
 					leftOperand: leftOperand + operand,
@@ -142,50 +157,33 @@ class App extends React.Component {
 	}
 
 	calculateForDisplay() {
-		const total = this.calculate().toString();
-		this.setState({
-			display: total,
-			leftOperand: null,
-			rightOperand: null,
-			operation: null,
-			isTotaled: true,
-		});
+		const { leftOperand, operation, rightOperand } = this.state;
+		if (leftOperand != null && operation && rightOperand !== null) {
+			const total = this.calculate().toString();
+			this.setState({
+				display: total,
+				leftOperand: null,
+				rightOperand: null,
+				operation: null,
+				isTotaled: true,
+			});
+		}
 	}
 
 	calculate() {
 		const { leftOperand, rightOperand, operation } = this.state;
-		let total = 0;
-		if (!operation && leftOperand === null) return 0;
-		if (!operation && leftOperand !== null) return leftOperand;
-		if (operation && leftOperand !== null && rightOperand === null)
-			return leftOperand;
-		if (operation && leftOperand !== null && rightOperand !== null) {
-			switch (operation) {
-				case '+':
-					total = Number(leftOperand) + Number(rightOperand);
-					if (total.toString().includes('.'))
-						return Number.parseFloat(total.toPrecision(8).toString());
-					return total;
-				case '-':
-					total = Number(leftOperand) - Number(rightOperand);
-					if (total.toString().includes('.'))
-						return Number.parseFloat(total.toPrecision(8).toString());
-					return total;
-				case 'x':
-					total = Number(leftOperand) * Number(rightOperand);
-					if (total.toString().includes('.'))
-						return Number.parseFloat(total.toPrecision(8).toString());
-					return total;
-				case '/':
-					total = Number(leftOperand) / Number(rightOperand);
-					if (total.toString().includes('.'))
-						return Number.parseFloat(total.toPrecision(8).toString());
-					return total;
-				default:
-					return total;
-			}
+		switch (operation) {
+			case '+':
+				return App.formatTotal(Number(leftOperand) + Number(rightOperand));
+			case '-':
+				return App.formatTotal(Number(leftOperand) - Number(rightOperand));
+			case 'x':
+				return App.formatTotal(Number(leftOperand) * Number(rightOperand));
+			case '/':
+				return App.formatTotal(Number(leftOperand) / Number(rightOperand));
+			default:
+				return 0;
 		}
-		return 0;
 	}
 
 	render() {
