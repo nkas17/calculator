@@ -1,6 +1,6 @@
 import React from 'react';
 import renderer from 'react-test-renderer';
-import App from './App';
+import App, { INIT_STATE } from './App';
 
 beforeEach(() => {
 	jest.clearAllMocks();
@@ -367,5 +367,194 @@ describe('App function setLeftOperand', () => {
 			leftOperand: '55',
 			display: '55',
 		});
+	});
+
+	it('works correctly when is totaled and no leftOperand', () => {
+		const app = new App();
+		app.setState = jest.fn();
+		app.state = {
+			leftOperand: null,
+			isTotaled: true,
+		};
+		app.setLeftOperand('5');
+		expect(app.setState).toHaveBeenCalledWith({
+			...INIT_STATE,
+			leftOperand: '5',
+			display: '5',
+		});
+	});
+
+	it('works correctly when is totaled and there is a leftOperand less than MAX_DISPLAY', () => {
+		const app = new App();
+		app.setState = jest.fn();
+		app.state = {
+			leftOperand: '5',
+			isTotaled: true,
+		};
+		app.setLeftOperand('5');
+		expect(app.setState).toHaveBeenCalledWith({
+			...INIT_STATE,
+			leftOperand: '55',
+			display: '55',
+		});
+	});
+
+	it('works correctly when leftOperand is equal to MAX_DISPLAY', () => {
+		const app = new App();
+		app.setState = jest.fn();
+		app.state = {
+			leftOperand: '56789123',
+			isTotaled: true,
+		};
+		app.setLeftOperand('5');
+		expect(app.setState).not.toHaveBeenCalled();
+	});
+});
+
+describe('App function setRightOperand', () => {
+	it('works correctly when is not totaled and no rightOperand', () => {
+		const app = new App();
+		app.setState = jest.fn();
+		app.state = {
+			rightOperand: null,
+			isTotaled: false,
+		};
+		app.setRightOperand('5');
+		expect(app.setState).toHaveBeenCalledWith({
+			rightOperand: '5',
+			display: '5',
+		});
+	});
+
+	it('works correctly when is not totaled and there is a rightOperand less than MAX_DISPLAY', () => {
+		const app = new App();
+		app.setState = jest.fn();
+		app.state = {
+			rightOperand: '5',
+			isTotaled: false,
+		};
+		app.setRightOperand('5');
+		expect(app.setState).toHaveBeenCalledWith({
+			rightOperand: '55',
+			display: '55',
+		});
+	});
+
+	it('works correctly when is totaled and no rightOperand', () => {
+		const app = new App();
+		app.setState = jest.fn();
+		app.state = {
+			rightOperand: null,
+			isTotaled: true,
+		};
+		app.setRightOperand('5');
+		expect(app.setState).toHaveBeenCalledWith({
+			...INIT_STATE,
+			rightOperand: '5',
+			display: '5',
+		});
+	});
+
+	it('works correctly when is totaled and there is a rightOperand less than MAX_DISPLAY', () => {
+		const app = new App();
+		app.setState = jest.fn();
+		app.state = {
+			rightOperand: '5',
+			isTotaled: true,
+		};
+		app.setRightOperand('5');
+		expect(app.setState).toHaveBeenCalledWith({
+			...INIT_STATE,
+			rightOperand: '55',
+			display: '55',
+		});
+	});
+
+	it('works correctly when rightOperand is equal to MAX_DISPLAY', () => {
+		const app = new App();
+		app.setState = jest.fn();
+		app.state = {
+			rightOperand: '56789123',
+			isTotaled: true,
+		};
+		app.setRightOperand('5');
+		expect(app.setState).not.toHaveBeenCalled();
+	});
+});
+
+describe('App function applyNumberOrDecimal', () => {
+	it('works correctly when operation exists and operand is a number other than 0', () => {
+		const app = new App();
+		app.setRightOperand = jest.fn();
+		app.setLeftOperand = jest.fn();
+		app.state = {
+			operation: '+',
+		};
+		app.applyNumberOrDecimal('5');
+		expect(app.setRightOperand).toHaveBeenCalledWith('5');
+		expect(app.setLeftOperand).not.toHaveBeenCalled();
+	});
+
+	it('works correctly when operation exists and operand is 0', () => {
+		const app = new App();
+		app.setRightOperand = jest.fn();
+		app.setLeftOperand = jest.fn();
+		app.state = {
+			operation: '+',
+		};
+		app.applyNumberOrDecimal('0');
+		expect(app.setRightOperand).toHaveBeenCalledWith('0');
+		expect(app.setLeftOperand).not.toHaveBeenCalled();
+	});
+
+	it('works correctly when operation exists and operand is . without a . already being there', () => {
+		const app = new App();
+		app.setRightOperand = jest.fn();
+		app.setLeftOperand = jest.fn();
+		app.state = {
+			operation: '+',
+			display: '1',
+		};
+		app.applyNumberOrDecimal('.');
+		expect(app.setRightOperand).toHaveBeenCalledWith('.');
+		expect(app.setLeftOperand).not.toHaveBeenCalled();
+	});
+
+	it('works correctly when operation exists and operand is . with a . already being there', () => {
+		const app = new App();
+		app.setRightOperand = jest.fn();
+		app.setLeftOperand = jest.fn();
+		app.state = {
+			operation: '+',
+			display: '1.0',
+		};
+		app.applyNumberOrDecimal('.');
+		expect(app.setRightOperand).not.toHaveBeenCalled();
+		expect(app.setLeftOperand).not.toHaveBeenCalled();
+	});
+
+	it('works correctly when operation exists and operand is not a number', () => {
+		const app = new App();
+		app.setRightOperand = jest.fn();
+		app.setLeftOperand = jest.fn();
+		app.state = {
+			operation: '+',
+			display: '1.0',
+		};
+		app.applyNumberOrDecimal('r');
+		expect(app.setRightOperand).not.toHaveBeenCalled();
+		expect(app.setLeftOperand).not.toHaveBeenCalled();
+	});
+
+	it('works correctly when operation does not exist and operand is a number', () => {
+		const app = new App();
+		app.setRightOperand = jest.fn();
+		app.setLeftOperand = jest.fn();
+		app.state = {
+			operation: null,
+		};
+		app.applyNumberOrDecimal('5');
+		expect(app.setLeftOperand).toHaveBeenCalledWith('5');
+		expect(app.setRightOperand).not.toHaveBeenCalled();
 	});
 });

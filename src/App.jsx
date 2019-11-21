@@ -3,7 +3,7 @@ import '../node_modules/normalize.css/normalize.css';
 import './styles/main.css';
 
 const MAX_DISPLAY = 8;
-const INIT_STATE = {
+export const INIT_STATE = {
 	leftOperand: null,
 	rightOperand: null,
 	operation: null,
