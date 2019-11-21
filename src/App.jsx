@@ -167,7 +167,8 @@ class App extends React.Component {
 		if (leftOperand != null && operation && rightOperand !== null) {
 			const total = this.calculate().toString();
 			this.setState({
-				display: total,
+				display:
+					total === 'Infinity' || total === 'NaN' ? 'Not a number' : total,
 				leftOperand: null,
 				rightOperand: null,
 				operation: null,

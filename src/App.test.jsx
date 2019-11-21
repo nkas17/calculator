@@ -174,14 +174,14 @@ describe('App function calculateForDisplay', () => {
 		const app = new App();
 		app.state = { leftOperand: '1', operation: '+', rightOperand: '1' };
 		app.setState = jest.fn();
-		app.calculate = jest.fn().mockReturnValue(123);
+		app.calculate = jest.fn().mockReturnValue(2);
 		app.calculateForDisplay();
 		expect(app.calculate).toHaveBeenCalled();
 		expect(app.setState).toHaveBeenCalledWith({
 			leftOperand: null,
 			rightOperand: null,
 			operation: null,
-			display: '123',
+			display: '2',
 			isTotaled: true,
 		});
 	});
@@ -214,6 +214,38 @@ describe('App function calculateForDisplay', () => {
 		app.calculateForDisplay();
 		expect(app.calculate).not.toHaveBeenCalled();
 		expect(app.setState).not.toHaveBeenCalled();
+	});
+
+	it('works correctly when total is Infinity', () => {
+		const app = new App();
+		app.state = { leftOperand: '1', operation: '/', rightOperand: '0' };
+		app.setState = jest.fn();
+		app.calculate = jest.fn().mockReturnValue('Infinity');
+		app.calculateForDisplay();
+		expect(app.calculate).toHaveBeenCalled();
+		expect(app.setState).toHaveBeenCalledWith({
+			leftOperand: null,
+			rightOperand: null,
+			operation: null,
+			display: 'Not a number',
+			isTotaled: true,
+		});
+	});
+
+	it('works correctly when total is NaN', () => {
+		const app = new App();
+		app.state = { leftOperand: '1', operation: '/', rightOperand: '.' };
+		app.setState = jest.fn();
+		app.calculate = jest.fn().mockReturnValue('NaN');
+		app.calculateForDisplay();
+		expect(app.calculate).toHaveBeenCalled();
+		expect(app.setState).toHaveBeenCalledWith({
+			leftOperand: null,
+			rightOperand: null,
+			operation: null,
+			display: 'Not a number',
+			isTotaled: true,
+		});
 	});
 });
 
