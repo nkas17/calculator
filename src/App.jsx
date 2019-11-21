@@ -3,6 +3,13 @@ import '../node_modules/normalize.css/normalize.css';
 import './styles/main.css';
 
 const MAX_DISPLAY = 8;
+const INIT_STATE = {
+	leftOperand: null,
+	rightOperand: null,
+	operation: null,
+	display: 0,
+	isTotaled: false,
+};
 
 class App extends React.Component {
 	static formatTotal(total) {
@@ -14,11 +21,7 @@ class App extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			leftOperand: null,
-			rightOperand: null,
-			operation: null,
-			display: 0,
-			isTotaled: false,
+			...INIT_STATE,
 		};
 		this.onClick = this.onClick.bind(this);
 	}
@@ -64,53 +67,56 @@ class App extends React.Component {
 		}
 	}
 
-	applyNumberOrDecimal(operand) {
-		const { leftOperand, rightOperand, operation, isTotaled } = this.state;
-		if (Number(operand) || operand === '0' || operand === '.') {
-			let clear = {};
-			if (isTotaled) {
-				clear = {
-					leftOperand: null,
-					rightOperand: null,
-					operation: null,
-					display: 0,
-					total: 0,
-					isTotaled: false,
-				};
-			}
+	setLeftOperand(operand) {
+		const { isTotaled, leftOperand } = this.state;
+		if (leftOperand === null) {
+			this.setState({
+				...(isTotaled && INIT_STATE),
+				leftOperand: operand,
+				display: operand,
+			});
+			return;
+		}
+		if (leftOperand.length < MAX_DISPLAY) {
+			this.setState({
+				...(isTotaled && INIT_STATE),
+				leftOperand: leftOperand + operand,
+				display: leftOperand + operand,
+			});
+		}
+	}
 
-			// set right
-			if (operation && rightOperand === null) {
-				this.setState({ ...clear, rightOperand: operand, display: operand });
+	setRightOperand(operand) {
+		const { isTotaled, rightOperand } = this.state;
+		if (rightOperand === null) {
+			this.setState({
+				...(isTotaled && INIT_STATE),
+				rightOperand: operand,
+				display: operand,
+			});
+			return;
+		}
+		if (rightOperand.length < MAX_DISPLAY) {
+			this.setState({
+				...(isTotaled && INIT_STATE),
+				rightOperand: rightOperand + operand,
+				display: rightOperand + operand,
+			});
+		}
+	}
+
+	applyNumberOrDecimal(operand) {
+		const { operation, display } = this.state;
+		if (
+			Number(operand) ||
+			operand === '0' ||
+			(operand === '.' && !display.includes('.'))
+		) {
+			if (operation) {
+				this.setRightOperand(operand);
 				return;
 			}
-			if (
-				operation &&
-				rightOperand !== null &&
-				rightOperand.length < MAX_DISPLAY
-			) {
-				this.setState({
-					...clear,
-					rightOperand: rightOperand + operand,
-					display: rightOperand + operand,
-				});
-			}
-			// set left
-			if (!operation && leftOperand === null) {
-				this.setState({ ...clear, leftOperand: operand, display: operand });
-				return;
-			}
-			if (
-				!operation &&
-				leftOperand !== null &&
-				leftOperand.length < MAX_DISPLAY
-			) {
-				this.setState({
-					...clear,
-					leftOperand: leftOperand + operand,
-					display: leftOperand + operand,
-				});
-			}
+			this.setLeftOperand(operand);
 		}
 	}
 

@@ -2,6 +2,27 @@ import React from 'react';
 import renderer from 'react-test-renderer';
 import App from './App';
 
+beforeEach(() => {
+	jest.clearAllMocks();
+});
+
+describe('App static function formatTotal', () => {
+	it('works correctly with no decimal', () => {
+		const total = App.formatTotal(2);
+		expect(total).toEqual(2);
+	});
+
+	it('works correctly with a decimal', () => {
+		const total = App.formatTotal(2.2);
+		expect(total).toEqual(2.2);
+	});
+
+	it('works correctly with a decimal precision is over 8', () => {
+		const total = App.formatTotal(2.12345678912345);
+		expect(total).toEqual(2.1234568);
+	});
+});
+
 describe('App renders', () => {
 	it('correctly', () => {
 		const tree = renderer.create(<App />).toJSON();
@@ -309,7 +330,6 @@ describe('App function calculate', () => {
 
 	it('works correctly when operation is unknown', () => {
 		const app = new App();
-		App.formatTotal = jest.fn();
 		app.state = {
 			operation: '_',
 			leftOperand: '100',
@@ -317,5 +337,35 @@ describe('App function calculate', () => {
 		};
 		expect(app.calculate()).toEqual(0);
 		expect(App.formatTotal).not.toHaveBeenCalled();
+	});
+});
+
+describe('App function setLeftOperand', () => {
+	it('works correctly when is not totaled and no leftOperand', () => {
+		const app = new App();
+		app.setState = jest.fn();
+		app.state = {
+			leftOperand: null,
+			isTotaled: false,
+		};
+		app.setLeftOperand('5');
+		expect(app.setState).toHaveBeenCalledWith({
+			leftOperand: '5',
+			display: '5',
+		});
+	});
+
+	it('works correctly when is not totaled and there is a leftOperand less than MAX_DISPLAY', () => {
+		const app = new App();
+		app.setState = jest.fn();
+		app.state = {
+			leftOperand: '5',
+			isTotaled: false,
+		};
+		app.setLeftOperand('5');
+		expect(app.setState).toHaveBeenCalledWith({
+			leftOperand: '55',
+			display: '55',
+		});
 	});
 });
