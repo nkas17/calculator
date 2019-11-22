@@ -14,7 +14,7 @@ exports[`App renders correctly 1`] = `
       className="calc-button-container"
     >
       <button
-        className="calc-button"
+        className="calc-button calc-button-clear"
         onClick={[Function]}
         type="button"
       >
