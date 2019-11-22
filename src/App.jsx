@@ -202,7 +202,7 @@ class App extends React.Component {
 					<div className="calc-button-container">
 						<button
 							type="button"
-							className="calc-button"
+							className="calc-button calc-button-clear"
 							onClick={this.onClick}
 						>
 							AC

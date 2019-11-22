@@ -19,7 +19,6 @@
 }
 
 .calc-button-container {
-	/* border: dashed blue 3px; */
 	margin: 4px 4px;
 	padding: 4px 4px;
 	display: grid;
@@ -33,7 +32,6 @@
   border-radius: 4px 4px 4px 4px;
 	font-size: 4rem;
 	background-color: #626262;
-	display: grid;
 }
 
 .calc-button:hover{
@@ -50,7 +48,7 @@
 	grid-row: 5;
 }
 
-@media only screen and (max-width: 600px) {
+@media only screen and (max-width: 1024px) {
 	html{
 	background: #2e2e2e;
 }
@@ -59,12 +57,30 @@
 		border-radius: 0;
 		box-shadow: none;
   }
+
 	.calc-display{
 		font-size: 4rem;
 		border-radius: 0;
 	}
+	
+	.calc-button-container{
+		margin: 2px 2px;
+		grid-gap: 4px;
+	}
 
 	.calc-button{
-		font-size: 3rem;
+		font-size: 2rem;
+	}
+
+	.calc-button-clear {
+		font-size: 1.5rem;
+	}
+
+	.calc-button:hover{
+		background-color: #626262;
+	}
+
+	.calc-button__operand:hover{
+		background-color: #3f3f3f;
 	}
 }
