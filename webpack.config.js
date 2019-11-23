@@ -16,7 +16,10 @@ const config = {
 		path: path.resolve(__dirname, 'dist'),
 	},
 	plugins: [
-		new CopyWebpackPlugin([{ from: './src/index.html' }]),
+		new CopyWebpackPlugin([
+			{ from: './src/index.html' },
+			{ from: './src/assets' },
+		]),
 		new webpack.HotModuleReplacementPlugin(),
 	],
 	module: {

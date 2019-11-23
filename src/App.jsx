@@ -15,6 +15,13 @@ class App extends React.Component {
 	static formatTotal(total) {
 		if (total.toString().includes('.'))
 			return Number.parseFloat(total.toPrecision(MAX_DISPLAY).toString());
+		if (total.toString().length > MAX_DISPLAY) {
+			const firstSet = total.toString().substring(0, MAX_DISPLAY - 1);
+			const theMax = total.toString().substring(MAX_DISPLAY - 1, MAX_DISPLAY);
+			const theRest = total.toString().substring(MAX_DISPLAY);
+			const rounded = Math.round(`${theMax}.${theRest}`);
+			return Number(firstSet + rounded);
+		}
 		return total;
 	}
 

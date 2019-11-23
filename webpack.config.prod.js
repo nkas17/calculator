@@ -51,14 +51,7 @@ module.exports = {
 		],
 	},
 	plugins: [
-		// // Moves the index.html file over and asset folder to the dist folder
-		new CopyWebpackPlugin([
-			// {output}/dist/file.txt
-			{ from: 'index.html' },
-
-			// 	// Copy directory contents to {output}/to/directory/
-			// 	{ from: 'assets', to: 'assets' },
-		]),
+		new CopyWebpackPlugin([{ from: 'index.html' }, { from: 'assets' }]),
 		new webpack.LoaderOptionsPlugin({
 			minimize: true,
 			debug: false,

@@ -12,6 +12,11 @@ describe('App static function formatTotal', () => {
 		expect(total).toEqual(2);
 	});
 
+	it('works correctly with no decimal and total is over 8 places', () => {
+		const total = App.formatTotal(123456789);
+		expect(total).toEqual(12345679);
+	});
+
 	it('works correctly with a decimal', () => {
 		const total = App.formatTotal(2.2);
 		expect(total).toEqual(2.2);

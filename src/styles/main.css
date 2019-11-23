@@ -1,6 +1,6 @@
 	html{
 	background: #4688b1;
-	font-family: Verdana, Geneva, sans-serif
+	font-family: Verdana, Geneva, sans-serif;
 }
 
 .calc-container {
@@ -49,7 +49,6 @@
 }
 
 @media only screen and (max-width: 1024px) {
-
 	.calc-container {
 		margin: 0;
 		border-radius: 0;
@@ -75,5 +74,26 @@
 
 	.calc-button__operand:hover{
 		background-color: #fbeec1;
+	}
+}
+
+@media only screen and (max-width: 600px) {
+	html{
+		position: absolute;
+		bottom: 0;
+		width: 100%;
+	}
+}
+
+@media only screen and (max-width: 325px) {
+
+	.calc-button-container {
+		grid-auto-rows: minmax(94px, auto);
+	}	
+}
+
+@media only screen and (max-height: 600px) {
+	html{
+		position: relative;
 	}
 }
